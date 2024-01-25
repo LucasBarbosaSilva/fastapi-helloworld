@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 import uvicorn
 from contas_a_pagar_e_receber.routers import contas_a_pagar_e_receber_router
+
 app = FastAPI()
+
 
 @app.get("/")
 def oi_eu_sou_programador() -> str:
