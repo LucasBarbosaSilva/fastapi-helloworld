@@ -7,3 +7,6 @@ psycopg2-binary==2.9.9
 #TEST
 pytest==7.4.4
 httpx==0.26.0
+
+#Tools
+alembic==1.13.1

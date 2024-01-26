@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, Numeric, String
+from decimal import Decimal
+from sqlalchemy import Column, Integer, String, Float
+
 from shared.database import Base
 
 
@@ -7,5 +9,5 @@ class ContaPagarReceber (Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     descricao = Column(String(30))
-    valor = Column(Numeric)
+    valor = Column(Float)
     tipo = Column(String(30))
