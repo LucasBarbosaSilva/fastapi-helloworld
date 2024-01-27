@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from contas_a_pagar_e_receber.models.contas_a_pagar_receber_model import ContaPagarReceber
 
 from shared.dependecies import get_db
+from shared.exceptions import NotFoundExecption
 
 router = APIRouter(prefix="/contas-a-pagar-e-receber")
 
@@ -47,7 +48,9 @@ def atualizar_conta(
         db:Session = Depends(get_db)
     ) -> ContaPagarReceberResponse:
     
-    conta_a_pagar_do_banco: ContaPagarReceber = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
+    conta_a_pagar_do_banco: ContaPagarReceber = busca_conta_pelo_id(id_conta_a_pagar_e_receber=id_conta_a_pagar_e_receber, db=db)
+    if not conta_a_pagar_do_banco:
+        raise NotFoundExecption("Conta a Pagar e Receber")
     conta_a_pagar_do_banco.tipo = conta_request.tipo
     conta_a_pagar_do_banco.valor = conta_request.valor
     conta_a_pagar_do_banco.descricao = conta_request.descricao
@@ -62,8 +65,10 @@ def deletar_conta(
         id_conta_a_pagar_e_receber: int,
         db:Session = Depends(get_db)
     ):
-    conta = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
-    db.delete(conta)
+    conta_a_pagar_do_banco: ContaPagarReceber = busca_conta_pelo_id(id_conta_a_pagar_e_receber=id_conta_a_pagar_e_receber, db=db)
+    if not conta_a_pagar_do_banco:
+        raise NotFoundExecption("Conta a Pagar e Receber")
+    db.delete(conta_a_pagar_do_banco)
     db.commit()
     
 @router.get("/{id_conta_a_pagar_e_receber}", response_model=ContaPagarReceberResponse, status_code=200)
@@ -72,5 +77,12 @@ def listar_conta(
         db:Session = Depends(get_db)
     ) -> ContaPagarReceberResponse:
     
-    conta_a_pagar_do_banco: ContaPagarReceber = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
+    conta_a_pagar_do_banco: ContaPagarReceber = busca_conta_pelo_id(id_conta_a_pagar_e_receber=id_conta_a_pagar_e_receber, db=db)
+    if not conta_a_pagar_do_banco:
+        raise NotFoundExecption("Conta a Pagar e Receber")
     return conta_a_pagar_do_banco
+
+def busca_conta_pelo_id( 
+        id_conta_a_pagar_e_receber: int,
+        db:Session) -> ContaPagarReceber: 
+    return db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
