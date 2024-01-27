@@ -1,6 +1,6 @@
 from decimal import Decimal
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from enum import Enum
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -39,4 +39,38 @@ def criar_conta(conta: ContaPagarReceberRequest, db:Session = Depends(get_db)) -
     db.commit()
     db.refresh(contas_a_pagar_e_receber)
     return contas_a_pagar_e_receber
-                                     
+
+@router.put("/{id_conta_a_pagar_e_receber}", response_model=ContaPagarReceberResponse, status_code=200)
+def atualizar_conta(
+        id_conta_a_pagar_e_receber: int,
+        conta_request: ContaPagarReceberRequest, 
+        db:Session = Depends(get_db)
+    ) -> ContaPagarReceberResponse:
+    
+    conta_a_pagar_do_banco: ContaPagarReceber = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
+    conta_a_pagar_do_banco.tipo = conta_request.tipo
+    conta_a_pagar_do_banco.valor = conta_request.valor
+    conta_a_pagar_do_banco.descricao = conta_request.descricao
+    
+    db.add(conta_a_pagar_do_banco)
+    db.commit()
+    db.refresh(conta_a_pagar_do_banco)
+    return conta_a_pagar_do_banco
+
+@router.delete("/{id_conta_a_pagar_e_receber}", status_code=204)
+def deletar_conta(
+        id_conta_a_pagar_e_receber: int,
+        db:Session = Depends(get_db)
+    ):
+    conta = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
+    db.delete(conta)
+    db.commit()
+    
+@router.get("/{id_conta_a_pagar_e_receber}", response_model=ContaPagarReceberResponse, status_code=200)
+def listar_conta(
+        id_conta_a_pagar_e_receber: int,
+        db:Session = Depends(get_db)
+    ) -> ContaPagarReceberResponse:
+    
+    conta_a_pagar_do_banco: ContaPagarReceber = db.query(ContaPagarReceber).get(id_conta_a_pagar_e_receber)
+    return conta_a_pagar_do_banco
