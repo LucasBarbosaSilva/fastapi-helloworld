@@ -5,6 +5,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from contas_a_pagar_e_receber.models.contas_a_pagar_receber_model import ContaPagarReceber
+from contas_a_pagar_e_receber.routers.fornecedor_cliente_router import FornecedorClienteResponse
 
 from shared.dependecies import get_db
 from shared.exceptions import NotFoundExecption
@@ -16,7 +17,7 @@ class ContaPagarReceberResponse(BaseModel):
     descricao: str
     valor: Decimal
     tipo: str #PAGAR, RECEBER
-    
+    fornecedor: FornecedorClienteResponse | None = None
     class Config:
         from_attributes = True
 
@@ -28,6 +29,7 @@ class ContaPagarReceberRequest(BaseModel):
     descricao: str = Field(min_length=3, max_length=30)
     valor: Decimal = Field(gt=0)
     tipo: ContaPagarReceberTipoEnum
+    fornecedor_cliente_id: int | None = None
 
 @router.get("", response_model=List[ContaPagarReceberResponse])
 def listar_contas(db:Session = Depends(get_db)) -> List[ContaPagarReceberResponse]:

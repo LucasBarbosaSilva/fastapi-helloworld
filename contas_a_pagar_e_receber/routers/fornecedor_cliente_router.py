@@ -10,8 +10,8 @@ endpoint = "/fornecedor-cliente"
 router = APIRouter(prefix=endpoint)
 
 class FornecedorClienteResponse(BaseModel):
-    id: int
-    nome: str
+    id: int = Field(index=True)
+    nome: str = Field(index=True)
     
     class Config:
         from_attributes = True
