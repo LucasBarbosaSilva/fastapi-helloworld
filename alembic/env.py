@@ -20,6 +20,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from contas_a_pagar_e_receber.models.contas_a_pagar_receber_model import ContaPagarReceber
+from contas_a_pagar_e_receber.models.fornecedor_cliente_model import FornecedorCliente
 from shared.database import Base
 target_metadata = Base.metadata
 
